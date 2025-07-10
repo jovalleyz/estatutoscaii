@@ -48,6 +48,7 @@
         <header class="text-center mb-10">
             <h1 class="text-4xl md:text-5xl font-black text-deep-blue mb-2">Explorador Interactivo de Estatutos</h1>
             <p class="text-lg text-medium-blue">Junta de Vecinos Colinas del Arroyo II</p>
+            <div id="visit-counter" class="mt-4 text-sm bg-accent-orange text-white font-semibold py-2 px-4 rounded-full inline-block shadow-lg transition-opacity duration-500 opacity-0"></div>
         </header>
 
         <nav class="flex justify-center border-b border-light-blue mb-12 space-x-2 md:space-x-8">
@@ -308,157 +309,214 @@
         <a href="https://wa.me/18295341802" target="_blank" class="font-semibold hover:underline">Contacto - Jonathan Valle</a>
     </footer>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('.content-section');
-    const boardGrid = document.getElementById('board-grid');
-    const boardDetails = document.getElementById('board-details');
+<script type="module">
+    document.addEventListener('DOMContentLoaded', async function () {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.content-section');
+        const boardGrid = document.getElementById('board-grid');
+        const boardDetails = document.getElementById('board-details');
 
-    const boardData = {
-        presidente: { title: 'Presidente', duties: 'Ejerce la máxima representación legal, judicial y extrajudicial de la Junta. Preside y dirige los debates en Asambleas y sesiones del Consejo. Es el responsable final de la gestión financiera, autorizando con su firma todos los pagos y contratos. Su rol es ser el principal vocero y líder estratégico de la comunidad.' },
-        vicepresidente: { title: 'Vice-Presidente', duties: 'Asiste al Presidente en todas sus funciones y lo reemplaza automáticamente en caso de ausencia temporal o definitiva, asumiendo la totalidad de sus poderes y responsabilidades para garantizar la continuidad del gobierno.' },
-        secretaria: { title: 'Secretaria', duties: 'Es la fedataria de la asociación. Redacta y custodia todas las actas de asambleas y reuniones, gestiona la correspondencia oficial, mantiene el archivo documental y el sello de la Junta, y realiza las convocatorias formales.' },
-        tesorera: { title: 'Tesorera', duties: 'Es la guardiana de la salud financiera de la Junta. Supervisa la contabilidad, firma cheques mancomunadamente con el Presidente, presenta informes financieros detallados mensuales y anuales, y vela por la correcta recaudación y uso de los fondos.' },
-        juntas_juveniles: { title: 'Directora Juntas Juveniles', duties: 'Impulsa la participación de los jóvenes en la comunidad. Diseña y ejecuta programas y actividades académicas, culturales y deportivas orientadas a la juventud, fomentando su desarrollo integral y sentido de pertenencia.' },
-        equidad_genero: { title: 'Directora Equidad de Género', duties: 'Trabaja por la igualdad de derechos y oportunidades. Desarrolla programas de prevención de la violencia intrafamiliar, ofrece apoyo a mujeres en situación de vulnerabilidad y promueve una cultura de equidad en la comunidad.' },
-        educacion_ciudadana: { title: 'Directora Educación Ciudadana', duties: 'Fortalece el tejido cívico de la comunidad. Organiza programas de educación sobre deberes y derechos ciudadanos, valores familiares y convivencia pacífica. Actúa como enlace con las autoridades educativas locales.' },
-        gestion_ambiental: { title: 'Director Gestión Ambiental y Aseo Urbano', duties: 'Vela por la sostenibilidad y limpieza del entorno. Prepara y supervisa programas de saneamiento, manejo de residuos y reciclaje. Promueve la conciencia ambiental y el ornato de las áreas comunes.' },
-        relaciones_publicas: { title: 'Director de Relaciones Públicas', duties: 'Gestiona la imagen y comunicación de la Junta. Es el portavoz oficial ante medios y otras entidades, promueve la comunicación interna y externa, y organiza los eventos sociales y protocolares de la comunidad.' },
-        gestion_riesgo: { title: 'Director Gestión de Riesgo', duties: 'Prepara a la comunidad para responder ante emergencias. Elabora planes de contingencia, organiza brigadas de respuesta, coordina entrenamientos y simulacros, y gestiona los recursos para la mitigación de desastres.' },
-        deporte: { title: 'Director Deporte', duties: 'Fomenta la salud y la recreación a través de la actividad física. Planifica, organiza y promueve torneos, competencias y eventos deportivos para todas las edades, administrando el uso de las instalaciones deportivas.' },
-        seguridad_ciudadana: { title: 'Director de Seguridad Ciudadana', duties: 'Coordina la protección de la comunidad. Actúa como enlace directo con la Policía Nacional y otros cuerpos de seguridad, elabora y ejecuta planes de vigilancia y prevención del delito, y vela por la seguridad de la infraestructura.' },
-        infraestructura: { title: 'Director Infraestructura', duties: 'Supervisa la calidad y el mantenimiento de las obras y servicios. Vigila las construcciones municipales y privadas, el estado del drenaje pluvial, la señalización vial y la calidad de los servicios públicos, reportando deficiencias.' },
-        espacios_publicos: { title: 'Director de Espacios Públicos', duties: 'Es el custodio de las áreas comunes. Dirige la preservación y el embellecimiento de parques, áreas verdes y zonas recreativas, vigilando su correcto uso y reportando cualquier violación o daño a las mismas.' },
-        salud: { title: 'Directora de Salud', duties: 'Promueve el bienestar y la salud de los residentes. Desarrolla programas de salud preventiva, coordina operativos médicos y jornadas de vacunación, y orienta a la comunidad sobre nutrición, higiene y prevención de enfermedades.' },
-        disciplinario_presidente: { title: 'Presidente Consejo Disciplinario', duties: 'Lidera el órgano de justicia interna. Preside las sesiones del Consejo de Disciplina, dirige las investigaciones, actúa como mediador en conflictos entre miembros y es responsable de aplicar las sanciones correspondientes a las faltas.' },
-        disciplinario_secretario: { title: 'Secretario Consejo Disciplinario', duties: 'Es el documentalista del proceso disciplinario. Redacta las actas, notificaciones y comunicaciones del Consejo de Disciplina y Ética, asegurando que cada caso y decisión quede debidamente registrado.' },
-        disciplinario_miembro1: { title: '1er. Miembro Consejo Disciplinario', duties: 'Actúa como fiscal y garante de los estatutos. Su función principal es vigilar el cumplimiento de las normas y puede reemplazar al Presidente del Consejo de Disciplina en su ausencia, asegurando la continuidad del órgano.' },
-        disciplinario_miembro2: { title: '2do. Miembro Consejo Disciplinario', duties: 'Es el investigador de campo del Consejo. Tiene la responsabilidad de vigilar las actividades de la comunidad, detectar posibles violaciones a los estatutos e informar al Consejo para iniciar los procedimientos correspondientes.' }
-    };
-    
-    function initApp() {
-        if (boardGrid) {
-            populateBoardGrid();
-        }
-        setupNav();
+        const boardData = {
+            presidente: { title: 'Presidente', duties: 'Ejerce la máxima representación legal, judicial y extrajudicial de la Junta. Preside y dirige los debates en Asambleas y sesiones del Consejo. Es el responsable final de la gestión financiera, autorizando con su firma todos los pagos y contratos. Su rol es ser el principal vocero y líder estratégico de la comunidad.' },
+            vicepresidente: { title: 'Vice-Presidente', duties: 'Asiste al Presidente en todas sus funciones y lo reemplaza automáticamente en caso de ausencia temporal o definitiva, asumiendo la totalidad de sus poderes y responsabilidades para garantizar la continuidad del gobierno.' },
+            secretaria: { title: 'Secretaria', duties: 'Es la fedataria de la asociación. Redacta y custodia todas las actas de asambleas y reuniones, gestiona la correspondencia oficial, mantiene el archivo documental y el sello de la Junta, y realiza las convocatorias formales.' },
+            tesorera: { title: 'Tesorera', duties: 'Es la guardiana de la salud financiera de la Junta. Supervisa la contabilidad, firma cheques mancomunadamente con el Presidente, presenta informes financieros detallados mensuales y anuales, y vela por la correcta recaudación y uso de los fondos.' },
+            juntas_juveniles: { title: 'Directora Juntas Juveniles', duties: 'Impulsa la participación de los jóvenes en la comunidad. Diseña y ejecuta programas y actividades académicas, culturales y deportivas orientadas a la juventud, fomentando su desarrollo integral y sentido de pertenencia.' },
+            equidad_genero: { title: 'Directora Equidad de Género', duties: 'Trabaja por la igualdad de derechos y oportunidades. Desarrolla programas de prevención de la violencia intrafamiliar, ofrece apoyo a mujeres en situación de vulnerabilidad y promueve una cultura de equidad en la comunidad.' },
+            educacion_ciudadana: { title: 'Directora Educación Ciudadana', duties: 'Fortalece el tejido cívico de la comunidad. Organiza programas de educación sobre deberes y derechos ciudadanos, valores familiares y convivencia pacífica. Actúa como enlace con las autoridades educativas locales.' },
+            gestion_ambiental: { title: 'Director Gestión Ambiental y Aseo Urbano', duties: 'Vela por la sostenibilidad y limpieza del entorno. Prepara y supervisa programas de saneamiento, manejo de residuos y reciclaje. Promueve la conciencia ambiental y el ornato de las áreas comunes.' },
+            relaciones_publicas: { title: 'Director de Relaciones Públicas', duties: 'Gestiona la imagen y comunicación de la Junta. Es el portavoz oficial ante medios y otras entidades, promueve la comunicación interna y externa, y organiza los eventos sociales y protocolares de la comunidad.' },
+            gestion_riesgo: { title: 'Director Gestión de Riesgo', duties: 'Prepara a la comunidad para responder ante emergencias. Elabora planes de contingencia, organiza brigadas de respuesta, coordina entrenamientos y simulacros, y gestiona los recursos para la mitigación de desastres.' },
+            deporte: { title: 'Director Deporte', duties: 'Fomenta la salud y la recreación a través de la actividad física. Planifica, organiza y promueve torneos, competencias y eventos deportivos para todas las edades, administrando el uso de las instalaciones deportivas.' },
+            seguridad_ciudadana: { title: 'Director de Seguridad Ciudadana', duties: 'Coordina la protección de la comunidad. Actúa como enlace directo con la Policía Nacional y otros cuerpos de seguridad, elabora y ejecuta planes de vigilancia y prevención del delito, y vela por la seguridad de la infraestructura.' },
+            infraestructura: { title: 'Director Infraestructura', duties: 'Supervisa la calidad y el mantenimiento de las obras y servicios. Vigila las construcciones municipales y privadas, el estado del drenaje pluvial, la señalización vial y la calidad de los servicios públicos, reportando deficiencias.' },
+            espacios_publicos: { title: 'Director de Espacios Públicos', duties: 'Es el custodio de las áreas comunes. Dirige la preservación y el embellecimiento de parques, áreas verdes y zonas recreativas, vigilando su correcto uso y reportando cualquier violación o daño a las mismas.' },
+            salud: { title: 'Directora de Salud', duties: 'Promueve el bienestar y la salud de los residentes. Desarrolla programas de salud preventiva, coordina operativos médicos y jornadas de vacunación, y orienta a la comunidad sobre nutrición, higiene y prevención de enfermedades.' },
+            disciplinario_presidente: { title: 'Presidente Consejo Disciplinario', duties: 'Lidera el órgano de justicia interna. Preside las sesiones del Consejo de Disciplina, dirige las investigaciones, actúa como mediador en conflictos entre miembros y es responsable de aplicar las sanciones correspondientes a las faltas.' },
+            disciplinario_secretario: { title: 'Secretario Consejo Disciplinario', duties: 'Es el documentalista del proceso disciplinario. Redacta las actas, notificaciones y comunicaciones del Consejo de Disciplina y Ética, asegurando que cada caso y decisión quede debidamente registrado.' },
+            disciplinario_miembro1: { title: '1er. Miembro Consejo Disciplinario', duties: 'Actúa como fiscal y garante de los estatutos. Su función principal es vigilar el cumplimiento de las normas y puede reemplazar al Presidente del Consejo de Disciplina en su ausencia, asegurando la continuidad del órgano.' },
+            disciplinario_miembro2: { title: '2do. Miembro Consejo Disciplinario', duties: 'Es el investigador de campo del Consejo. Tiene la responsabilidad de vigilar las actividades de la comunidad, detectar posibles violaciones a los estatutos e informar al Consejo para iniciar los procedimientos correspondientes.' }
+        };
         
-        const initialSection = 'fundamentos';
-        showSection(initialSection);
-        document.querySelector(`.nav-link[data-target='${initialSection}']`).classList.add('active');
-
-        createGastosChart();
-    }
-    
-    function setupNav() {
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                const targetId = link.dataset.target;
-                
-                navLinks.forEach(nav => nav.classList.remove('active'));
-                link.classList.add('active');
-                
-                showSection(targetId);
-            });
-        });
-    }
-
-    function showSection(targetId) {
-        sections.forEach(section => {
-            if (section.id === targetId) {
-                section.classList.add('active');
-            } else {
-                section.classList.remove('active');
+        function initApp() {
+            if (boardGrid) {
+                populateBoardGrid();
             }
-        });
-    }
+            setupNav();
+            
+            const initialSection = 'fundamentos';
+            showSection(initialSection);
+            document.querySelector(`.nav-link[data-target='${initialSection}']`).classList.add('active');
 
-    function populateBoardGrid() {
-        let gridHtml = '';
-        for (const key in boardData) {
-            gridHtml += `
-                <button data-key="${key}" class="board-member-btn text-left p-3 bg-gray-50 rounded-lg hover:bg-light-blue hover:shadow-md transition-all duration-300 border border-gray-200">
-                    <span class="font-semibold text-sm text-deep-blue">${boardData[key].title}</span>
-                </button>
+            createGastosChart();
+        }
+        
+        function setupNav() {
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const targetId = link.dataset.target;
+                    
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    showSection(targetId);
+                });
+            });
+        }
+
+        function showSection(targetId) {
+            sections.forEach(section => {
+                if (section.id === targetId) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        }
+
+        function populateBoardGrid() {
+            let gridHtml = '';
+            for (const key in boardData) {
+                gridHtml += `
+                    <button data-key="${key}" class="board-member-btn text-left p-3 bg-gray-50 rounded-lg hover:bg-light-blue hover:shadow-md transition-all duration-300 border border-gray-200">
+                        <span class="font-semibold text-sm text-deep-blue">${boardData[key].title}</span>
+                    </button>
+                `;
+            }
+            boardGrid.innerHTML = gridHtml;
+
+            document.querySelectorAll('.board-member-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    updateBoardDetails(key);
+
+                    document.querySelectorAll('.board-member-btn').forEach(b => {
+                        b.classList.remove('bg-accent-orange');
+                        b.classList.add('bg-gray-50');
+                        b.querySelector('span').classList.remove('text-white');
+                        b.querySelector('span').classList.add('text-deep-blue');
+                    });
+                    
+                    btn.classList.remove('bg-gray-50');
+                    btn.classList.add('bg-accent-orange');
+                    btn.querySelector('span').classList.remove('text-deep-blue');
+                    btn.querySelector('span').classList.add('text-white');
+                });
+            });
+        }
+
+        function updateBoardDetails(key) {
+            const data = boardData[key];
+            boardDetails.innerHTML = `
+                <h4 class="font-bold text-lg mb-2 text-deep-blue">${data.title}</h4>
+                <p class="text-gray-700 text-sm">${data.duties}</p>
             `;
         }
-        boardGrid.innerHTML = gridHtml;
+        
+        function createGastosChart() {
+            const ctx = document.getElementById('gastosChart');
+            if (!ctx) return;
 
-        document.querySelectorAll('.board-member-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const key = btn.dataset.key;
-                updateBoardDetails(key);
+            const data = {
+                labels: ['Administración (Personal, etc.)', 'Servicios Comunes (Luz, Agua)', 'Mantenimiento y Mejoras', 'Seguros y Otros'],
+                datasets: [{
+                    label: 'Distribución de Gastos Comunes',
+                    data: [40, 25, 25, 10],
+                    backgroundColor: [
+                        '#0A3D62',
+                        '#3C6382',
+                        '#A1C1D1',
+                        '#F5A623'
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 4,
+                    hoverOffset: 8
+                }]
+            };
 
-                document.querySelectorAll('.board-member-btn').forEach(b => {
-                    b.classList.remove('bg-accent-orange');
-                    b.classList.add('bg-gray-50');
-                    b.querySelector('span').classList.remove('text-white');
-                    b.querySelector('span').classList.add('text-deep-blue');
-                });
-                
-                btn.classList.remove('bg-gray-50');
-                btn.classList.add('bg-accent-orange');
-                btn.querySelector('span').classList.remove('text-deep-blue');
-                btn.querySelector('span').classList.add('text-white');
-            });
-        });
-    }
-
-    function updateBoardDetails(key) {
-        const data = boardData[key];
-        boardDetails.innerHTML = `
-            <h4 class="font-bold text-lg mb-2 text-deep-blue">${data.title}</h4>
-            <p class="text-gray-700 text-sm">${data.duties}</p>
-        `;
-    }
-    
-    function createGastosChart() {
-        const ctx = document.getElementById('gastosChart');
-        if (!ctx) return;
-
-        const data = {
-            labels: ['Administración (Personal, etc.)', 'Servicios Comunes (Luz, Agua)', 'Mantenimiento y Mejoras', 'Seguros y Otros'],
-            datasets: [{
-                label: 'Distribución de Gastos Comunes',
-                data: [40, 25, 25, 10],
-                backgroundColor: [
-                    '#0A3D62',
-                    '#3C6382',
-                    '#A1C1D1',
-                    '#F5A623'
-                ],
-                borderColor: '#FFFFFF',
-                borderWidth: 4,
-                hoverOffset: 8
-            }]
-        };
-
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: { family: 'Inter' },
-                            color: '#333'
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Inter' },
+                                color: '#333'
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: { family: 'Inter' },
+                            titleFont: { family: 'Inter' }
                         }
                     },
-                    tooltip: {
-                        bodyFont: { family: 'Inter' },
-                        titleFont: { family: 'Inter' }
-                    }
-                },
-                cutout: '60%'
-            }
-        });
-    }
+                    cutout: '60%'
+                }
+            });
+        }
 
-    initApp();
-});
+        initApp();
+
+        // --- Firebase Visit Counter Logic ---
+        try {
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const visitCounterElement = document.getElementById('visit-counter');
+
+            if (!visitCounterElement || !firebaseConfig || Object.keys(firebaseConfig).length === 0 || appId === 'default-app-id') {
+                if(visitCounterElement) visitCounterElement.style.display = 'none';
+                return;
+            }
+
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+            const { getAuth, signInAnonymously, signInWithCustomToken } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+            const { getFirestore, doc, getDoc, setDoc, updateDoc, increment } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+
+            async function handleCounter() {
+                const counterRef = doc(db, `artifacts/${appId}/public/data/site_stats/visits`);
+
+                if (sessionStorage.getItem('visitIncremented') !== 'true') {
+                    const docSnap = await getDoc(counterRef);
+                    if (docSnap.exists()) {
+                        await updateDoc(counterRef, { count: increment(1) });
+                    } else {
+                        await setDoc(counterRef, { count: 1 });
+                    }
+                    sessionStorage.setItem('visitIncremented', 'true');
+                }
+
+                const updatedDocSnap = await getDoc(counterRef);
+                if (updatedDocSnap.exists()) {
+                    const count = updatedDocSnap.data().count;
+                    visitCounterElement.textContent = `Ya ${count} ${count === 1 ? 'vecino ha' : 'vecinos han'} leído los reglamentos.`;
+                } else {
+                    visitCounterElement.textContent = `¡Sé el primero en leer los reglamentos!`;
+                }
+                visitCounterElement.classList.remove('opacity-0');
+            }
+
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+            await handleCounter();
+
+        } catch (error) {
+            console.error("Error initializing or updating visit counter:", error);
+            const visitCounterElement = document.getElementById('visit-counter');
+            if (visitCounterElement) {
+                visitCounterElement.style.display = 'none';
+            }
+        }
+    });
 </script>
 
 </body>
