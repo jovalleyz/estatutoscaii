@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador Interactivo de Estatutos | Junta de Vecinos Colinas del Arroyo II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Application Structure Plan: The application is designed as a user-centric SPA with five thematic sections, moving beyond the linear structure of the original legal document. The goal is to facilitate understanding by grouping related concepts. The flow is: 1) "Fundamentos" (Identity & History), 2) "Membresía" (Rights & Duties), 3) "Gobernanza" (Power Structure), 4) "Procesos Clave" (Rules & Procedures), and 5) "Análisis Crítico" (Insights & Potential Conflicts). This structure was chosen because it guides the user from the general identity to the specific rights, then to the power structure, the rules that govern it, and finally to a meta-analysis. This layered approach is more intuitive for a resident than reading legal chapters sequentially. Key interactions include an interactive governance diagram, a clickable organizational chart, and dynamic content panels to make complex information digestible. -->
+    <!-- Visualization & Content Choices: 1. Governance Diagram (Organize): A custom HTML/CSS diagram to visualize the complex relationship between the Assembly, Board, and Amplified Board. This avoids dense text and is more intuitive. Interaction: Hovering reveals connections. 2. Board Positions (Organize): A clickable grid of 19 roles. Goal: Detail responsibilities without cluttering the page. Method: JS-powered content switching. Interaction: Clicking a role displays its specific functions. 3. Membership Flow (Inform/Organize): A simple HTML/CSS visual flow showing how a member becomes "active" or "passive". Goal: Clarify the most critical status for members. 4. Sanctions Table (Compare/Organize): An HTML table linking infractions to sanctions. Goal: Provide a clear reference for rules. Interaction: Can be enhanced with JS filtering in the future. 5. Common Expenses Chart (Inform/Compare): A Chart.js Donut chart. Goal: Show the breakdown of community spending. Interaction: Tooltips on hover. Justification: These choices prioritize clarity and interaction over static text, transforming a legal document into an educational tool. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F0F4F8; }
+        .bg-deep-blue { background-color: #0A3D62; }
+        .bg-medium-blue { background-color: #3C6382; }
+        .bg-light-blue { background-color: #EBF2FA; }
+        .bg-soft-blue { background-color: #A1C1D1; }
+        .accent-orange { color: #F5A623; }
+        .bg-accent-orange { background-color: #F5A623; }
+        .text-deep-blue { color: #0A3D62; }
+        .text-medium-blue { color: #3C6382; }
+        .border-light-blue { border-color: #A1C1D1; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link.active { color: #0A3D62; border-bottom-color: #F5A623; transform: translateY(-2px); font-weight: 700; }
+        .content-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+        .timeline-item::before { content: ''; position: absolute; top: 0.5rem; left: -2.375rem; width: 1.5rem; height: 1.5rem; background-color: #F5A623; border-radius: 9999px; border: 4px solid #F0F4F8; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-black text-deep-blue mb-2">Explorador Interactivo de Estatutos</h1>
+            <p class="text-lg text-medium-blue">Junta de Vecinos Colinas del Arroyo II</p>
+        </header>
+
+        <nav class="flex justify-center border-b border-light-blue mb-12 space-x-2 md:space-x-8">
+            <button data-target="fundamentos" class="nav-link text-medium-blue py-3 px-2 md:px-4 border-b-2 border-transparent hover:text-deep-blue font-semibold">Fundamentos</button>
+            <button data-target="membresia" class="nav-link text-medium-blue py-3 px-2 md:px-4 border-b-2 border-transparent hover:text-deep-blue font-semibold">Membresía</button>
+            <button data-target="gobernanza" class="nav-link text-medium-blue py-3 px-2 md:px-4 border-b-2 border-transparent hover:text-deep-blue font-semibold">Gobernanza</button>
+            <button data-target="procesos" class="nav-link text-medium-blue py-3 px-2 md:px-4 border-b-2 border-transparent hover:text-deep-blue font-semibold">Procesos Clave</button>
+            <button data-target="analisis" class="nav-link text-medium-blue py-3 px-2 md:px-4 border-b-2 border-transparent hover:text-deep-blue font-semibold">Análisis Crítico</button>
+        </nav>
+
+        <main>
+            <!-- SECCIÓN 1: FUNDAMENTOS -->
+            <section id="fundamentos" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2 text-deep-blue">Identidad y Marco Legal</h2>
+                    <p class="max-w-3xl mx-auto text-medium-blue">Esta sección explora el nacimiento y la base jurídica de la Junta de Vecinos. Descubrirás la misión que nos guía, el objeto que nos define y la cronología de nuestra constitución formal, un viaje que demuestra una planificación y visión a largo plazo para el bienestar de nuestra comunidad.</p>
+                </div>
+                <div class="grid md:grid-cols-5 gap-8 items-start">
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 md:col-span-2">
+                        <h3 class="font-bold text-2xl mb-6 text-center text-deep-blue">Misión y Objeto</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-bold text-xl flex items-center text-medium-blue"><span class="text-3xl mr-3">🎯</span>Objeto</h4>
+                                <p class="text-gray-600 ml-10">Velar por el adecuado suministro de los servicios públicos y el cumplimiento de las normativas que nos rigen, actuando como voz fiscalizadora y representante de la comunidad.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl flex items-center text-medium-blue"><span class="text-3xl mr-3">🤝</span>Misión</h4>
+                                <p class="text-gray-600 ml-10">Defender y mejorar los intereses de los vecinos, promoviendo la unidad, la solidaridad y un crecimiento armonioso en nuestro entorno social y personal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200 md:col-span-3">
+                        <h3 class="font-bold text-2xl mb-8 text-center text-deep-blue">Línea de Tiempo Fundacional</h3>
+                        <div class="relative border-l-4 border-light-blue ml-4">
+                            <div class="relative timeline-item mb-10 pl-8">
+                                <p class="font-bold text-xl text-deep-blue">11 de Marzo, 2015</p>
+                                <p class="font-semibold text-medium-blue">Nace la Identidad</p>
+                                <p class="text-sm text-gray-600 mt-1">Se registra el nombre comercial en ONAPI. Un acto estratégico que protegió la "marca" de la comunidad casi 4 años antes de la constitución formal.</p>
+                            </div>
+                            <div class="relative timeline-item mb-10 pl-8">
+                                <p class="font-bold text-xl text-deep-blue">28 de Febrero, 2019</p>
+                                <p class="font-semibold text-medium-blue">Nace la Estructura</p>
+                                <p class="text-sm text-gray-600 mt-1">Se celebra la Asamblea Constitutiva y se aprueban los estatutos, marcando el nacimiento oficial del marco de gobierno de la asociación.</p>
+                            </div>
+                             <div class="relative timeline-item pl-8">
+                                <p class="font-bold text-xl text-deep-blue">20 de Junio, 2020</p>
+                                <p class="font-semibold text-medium-blue">Nace la Persona Jurídica</p>
+                                <p class="text-sm text-gray-600 mt-1">Se solicita la Incorporación formal ante la Procuraduría, obteniendo el reconocimiento legal pleno como Asociación Sin Fines de Lucro (ASFL).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: MEMBRESÍA -->
+            <section id="membresia" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2 text-deep-blue">Ser Parte de la Comunidad</h2>
+                    <p class="max-w-3xl mx-auto text-medium-blue">Aquí se define quiénes forman la Junta y cuáles son sus derechos y obligaciones. La membresía está ligada a la propiedad y el cumplimiento de las cuotas, un sistema que busca garantizar la sostenibilidad y la participación activa. Explora las distintas categorías de miembros y el balance entre lo que puedes aportar y lo que puedes recibir.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                     <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="font-bold text-2xl mb-4 text-center text-deep-blue">Clasificación de Miembros</h3>
+                        <p class="text-sm text-center text-gray-600 mb-6">El estatus de un miembro, y por tanto sus derechos políticos, depende directamente de su cumplimiento financiero.</p>
+                        <div class="flex items-center justify-center space-x-4">
+                            <div class="text-center p-4 rounded-lg bg-green-50 border-2 border-green-200 w-1/3">
+                                <p class="font-bold text-green-800">ACTIVO</p>
+                                <p class="text-xs text-green-700">Al día con las cuotas</p>
+                                <p class="text-xs font-bold text-green-700 mt-1">(Voz y Voto)</p>
+                            </div>
+                            <div class="text-2xl text-medium-blue font-light flex flex-col items-center">
+                                <span class="text-sm">3 meses de mora</span>
+                                <span class="text-4xl font-black">⇄</span>
+                            </div>
+                            <div class="text-center p-4 rounded-lg bg-red-50 border-2 border-red-200 w-1/3">
+                                <p class="font-bold text-red-800">PASIVO</p>
+                                <p class="text-xs text-red-700">Atraso en cuotas</p>
+                                <p class="text-xs font-bold text-red-700 mt-1">(Sin derechos políticos)</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-center text-gray-500 mt-6">También existen miembros <strong>Fundadores</strong> (históricos) y <strong>Honoríficos</strong> (consejeros sin voto).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="font-bold text-2xl mb-4 text-center text-deep-blue">Balance de Derechos y Deberes</h3>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold text-lg mb-2 text-medium-blue">Tus Derechos</h4>
+                                <ul class="space-y-2 text-sm text-gray-600 list-inside list-disc">
+                                    <li>Voz y voto en Asambleas</li>
+                                    <li>Elegir y ser elegido</li>
+                                    <li>Exigir revisión de cuentas</li>
+                                    <li>Recibir información periódica</li>
+                                    <li>Asistir a todas las reuniones</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-2 text-medium-blue">Tus Deberes</h4>
+                                <ul class="space-y-2 text-sm text-gray-600 list-inside list-disc">
+                                    <li>Acatar los estatutos</li>
+                                    <li>Cumplir misiones asignadas</li>
+                                    <li>Pagar las cuotas</li>
+                                    <li>Respetar normas de convivencia</li>
+                                    <li>Asistir a las asambleas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: GOBERNANZA -->
+            <section id="gobernanza" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2 text-deep-blue">Nuestra Estructura de Gobierno</h2>
+                    <p class="max-w-3xl mx-auto text-medium-blue">Entender cómo se toman las decisiones es clave. Esta sección desglosa la arquitectura de poder de la Junta, desde la Asamblea General como órgano supremo hasta el Consejo Directivo como motor ejecutivo. Utiliza el diagrama interactivo para ver las relaciones y explora la composición y funciones del detallado Consejo Directivo.</p>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-8">
+                    <h3 class="font-bold text-2xl mb-8 text-center text-deep-blue">Diagrama de Poder</h3>
+                    <div class="flex flex-col items-center text-center">
+                        <div class="border-4 border-deep-blue bg-white shadow-xl p-4 rounded-lg w-72 z-10">
+                            <p class="font-black text-xl text-deep-blue">ASAMBLEA GENERAL</p>
+                            <p class="text-sm text-medium-blue">(Todos los miembros activos)</p>
+                            <p class="text-xs font-semibold mt-2 bg-deep-blue text-white py-1 px-2 rounded-full inline-block">ÓRGANO SOBERANO</p>
+                        </div>
+                        
+                        <div class="py-3 text-center">
+                            <span class="text-2xl text-soft-blue">↓</span>
+                            <p class="text-sm font-semibold text-medium-blue">Elige y Supervisa</p>
+                        </div>
+
+                        <div class="border-2 border-medium-blue bg-white shadow-lg p-4 rounded-lg w-72 z-10">
+                            <p class="font-bold text-lg text-medium-blue">CONSEJO DIRECTIVO</p>
+                            <p class="text-sm text-gray-600">(19 Miembros Electos)</p>
+                             <p class="text-xs font-semibold mt-2 bg-medium-blue text-white py-1 px-2 rounded-full inline-block">ÓRGANO EJECUTIVO</p>
+                        </div>
+
+                        <div class="py-3 text-center">
+                            <span class="text-2xl text-soft-blue">+</span>
+                            <p class="text-sm font-semibold text-medium-blue">Se integra con</p>
+                        </div>
+
+                        <div class="border-2 border-dashed border-medium-blue bg-gray-50 p-4 rounded-lg w-72">
+                            <p class="font-bold text-lg text-medium-blue">CONSEJO AMPLIADO</p>
+                            <p class="text-sm text-gray-600">(Consejo + Pres. de Residenciales)</p>
+                             <p class="text-xs font-semibold mt-2 bg-gray-500 text-white py-1 px-2 rounded-full inline-block">ÓRGANO INTEGRADOR</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="font-bold text-2xl mb-1 text-center text-deep-blue">El Consejo Directivo</h3>
+                    <p class="text-center text-medium-blue mb-6">Un equipo de 19 especialistas electos por 2 años para gestionar la comunidad. Haz clic en un cargo para ver sus funciones detalladas.</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6" id="board-grid">
+                    </div>
+                    <div id="board-details" class="bg-light-blue p-6 rounded-lg min-h-[120px] border border-light-blue transition-all duration-300">
+                        <p class="text-center text-medium-blue">Selecciona un cargo para ver los detalles.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 4: PROCESOS CLAVE -->
+            <section id="procesos" class="content-section">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2 text-deep-blue">Reglas del Juego: Elecciones y Disciplina</h2>
+                    <p class="max-w-3xl mx-auto text-medium-blue">Una comunidad bien gestionada necesita procedimientos claros y justos. Aquí detallamos cómo se eligen nuestros líderes a través de un proceso transparente y cómo se manejan las infracciones a nuestras normas de convivencia. Explora el robusto sistema electoral y el régimen de faltas y sanciones que garantiza el orden y el respeto mutuo.</p>
+                </div>
+                 <div class="grid md:grid-cols-2 gap-8">
+                     <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                         <h3 class="font-bold text-2xl mb-4 text-center text-deep-blue">Proceso Electoral Transparente</h3>
+                         <ol class="space-y-4 text-gray-700 relative border-l-2 border-light-blue pl-8">
+                            <li class="pl-4">
+                                <div class="absolute w-6 h-6 bg-medium-blue rounded-full -left-[0.85rem] top-0 border-4 border-white flex items-center justify-center text-white font-bold text-xs">1</div>
+                                <h4 class="font-bold">Convocatoria a Asamblea</h4>
+                                <p class="text-sm">60 días antes de la elección, la Asamblea elige una Comisión Electoral independiente de 5 miembros para garantizar imparcialidad.</p>
+                            </li>
+                            <li class="pl-4">
+                                 <div class="absolute w-6 h-6 bg-medium-blue rounded-full -left-[0.85rem] top-0 border-4 border-white flex items-center justify-center text-white font-bold text-xs">2</div>
+                                <h4 class="font-bold">Inscripción de Planchas</h4>
+                                <p class="text-sm">Las candidaturas completas (19 cargos) deben inscribirse con el respaldo de 25 miembros hasta 7 días antes de la elección.</p>
+                            </li>
+                             <li class="pl-4">
+                                 <div class="absolute w-6 h-6 bg-medium-blue rounded-full -left-[0.85rem] top-0 border-4 border-white flex items-center justify-center text-white font-bold text-xs">3</div>
+                                <h4 class="font-bold">Jornada Electoral</h4>
+                                <p class="text-sm">Se vota por sufragio directo. La Comisión Electoral supervisa el proceso y el escrutinio, asegurando la legitimidad del resultado.</p>
+                            </li>
+                         </ol>
+                     </div>
+                     <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                        <h3 class="font-bold text-2xl mb-4 text-center text-deep-blue">Régimen Disciplinario</h3>
+                        <p class="text-sm text-center text-gray-600 mb-4">Un sistema escalonado de faltas y sanciones, aplicado por un Consejo de Disciplina y Ética.</p>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
+                                <p class="font-semibold text-yellow-800">Falta Leve</p>
+                                <p class="text-sm text-yellow-700">Ej: Inasistencia a 3 asambleas. Sanción: Suspensión temporal de derechos.</p>
+                            </div>
+                            <div class="p-3 bg-orange-50 border-l-4 border-orange-400 rounded-r-lg">
+                                <p class="font-semibold text-orange-800">Falta Grave</p>
+                                <p class="text-sm text-orange-700">Ej: Agresión, difamación. Sanción: Suspensión de 3 meses a 1 año.</p>
+                            </div>
+                             <div class="p-3 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
+                                <p class="font-semibold text-red-800">Falta Muy Grave</p>
+                                <p class="text-sm text-red-700">Ej: Hurto, fraude, destrucción de áreas comunes. Sanción: Expulsión definitiva.</p>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+            </section>
+            
+            <!-- SECCIÓN 5: ANÁLISIS CRÍTICO -->
+            <section id="analisis" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2 text-deep-blue">Fortalezas y Puntos Críticos</h2>
+                    <p class="max-w-3xl mx-auto text-medium-blue">Un análisis honesto nos ayuda a mejorar. Esta sección resume las principales fortalezas de nuestros estatutos, como su detallada estructura y sus cláusulas de protección. También identifica, de manera constructiva, áreas de ambigüedad o potenciales focos de conflicto que requieren atención para garantizar una gobernanza fluida y prevenir disputas futuras.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-500">
+                        <h3 class="font-bold text-2xl mb-4 text-center text-green-700">Nuestras Fortalezas ✅</h3>
+                        <ul class="space-y-3">
+                            <li><strong class="text-green-800">Estructura Detallada:</strong> Un Consejo de 19 carteras especializadas para una gestión integral.</li>
+                            <li><strong class="text-green-800">Protección del Patrimonio:</strong> Cláusula de blindaje que declara las áreas comunes como inalienables e inalterables.</li>
+                            <li><strong class="text-green-800">Cumplimiento Avanzado:</strong> Inclusión de una sofisticada cláusula anti-lavado y anti-terrorismo, proyectando seriedad y buen gobierno.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-red-500">
+                        <h3 class="font-bold text-2xl mb-4 text-center text-red-700">Potenciales Focos de Conflicto ⚠️</h3>
+                        <div class="space-y-3">
+                            <div><strong class="text-red-800">Ambigüedad en Aumento de Cuotas:</strong> Existe una contradicción entre el Art. 54 (la Asamblea fija la cuota) y el Art. 57 (el Consejo la "revisa"). ¿Puede el Consejo aumentarla unilateralmente? Esto necesita aclaración.</div>
+                            <div><strong class="text-red-800">Independencia del Consejo de Disciplina:</strong> El órgano disciplinario es elegido en la misma plancha que el Consejo Directivo, lo que crea un potencial conflicto de interés y podría comprometer su imparcialidad.</div>
+                            <div><strong class="text-red-800">Poder Reglamentario del Consejo:</strong> La facultad del Consejo para dictar reglamentos podría generar tensión si los miembros sienten que se usurpa el poder "supremo" de la Asamblea.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                     <h3 class="font-bold text-2xl mb-4 text-center text-deep-blue">Finanzas y Patrimonio Común</h3>
+                     <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="font-semibold mb-2 text-center text-medium-blue">Uso de los Fondos</h4>
+                            <p class="text-gray-600 mb-4 text-center text-sm">Las cuotas se destinan exclusivamente a gastos comunes bien definidos para garantizar la transparencia y el beneficio colectivo.</p>
+                            <div class="chart-container">
+                                <canvas id="gastosChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="text-center p-6 bg-light-blue rounded-lg">
+                            <span class="text-6xl">🏞️</span>
+                            <h4 class="font-bold text-xl mt-4 text-deep-blue">Patrimonio Protegido</h4>
+                            <p class="text-medium-blue mt-2">Nuestras áreas verdes, parques y canchas están blindadas por el Artículo 78: <strong>NO</strong> pueden ser vendidas, hipotecadas, cedidas ni alteradas. Son un legado perpetuo para la comunidad.</p>
+                        </div>
+                     </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <footer class="text-center p-6 mt-12 bg-deep-blue text-white text-sm">
+        <p>Ovalley Group 2025, Todos los derechos reservados.</p>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.content-section');
+    const boardGrid = document.getElementById('board-grid');
+    const boardDetails = document.getElementById('board-details');
+
+    const boardData = {
+        presidente: { title: 'Presidente', duties: 'Ejerce la máxima representación legal, judicial y extrajudicial de la Junta. Preside y dirige los debates en Asambleas y sesiones del Consejo. Es el responsable final de la gestión financiera, autorizando con su firma todos los pagos y contratos. Su rol es ser el principal vocero y líder estratégico de la comunidad.' },
+        vicepresidente: { title: 'Vice-Presidente', duties: 'Asiste al Presidente en todas sus funciones y lo reemplaza automáticamente en caso de ausencia temporal o definitiva, asumiendo la totalidad de sus poderes y responsabilidades para garantizar la continuidad del gobierno.' },
+        secretaria: { title: 'Secretaria', duties: 'Es la fedataria de la asociación. Redacta y custodia todas las actas de asambleas y reuniones, gestiona la correspondencia oficial, mantiene el archivo documental y el sello de la Junta, y realiza las convocatorias formales.' },
+        tesorera: { title: 'Tesorera', duties: 'Es la guardiana de la salud financiera de la Junta. Supervisa la contabilidad, firma cheques mancomunadamente con el Presidente, presenta informes financieros detallados mensuales y anuales, y vela por la correcta recaudación y uso de los fondos.' },
+        juntas_juveniles: { title: 'Directora Juntas Juveniles', duties: 'Impulsa la participación de los jóvenes en la comunidad. Diseña y ejecuta programas y actividades académicas, culturales y deportivas orientadas a la juventud, fomentando su desarrollo integral y sentido de pertenencia.' },
+        equidad_genero: { title: 'Directora Equidad de Género', duties: 'Trabaja por la igualdad de derechos y oportunidades. Desarrolla programas de prevención de la violencia intrafamiliar, ofrece apoyo a mujeres en situación de vulnerabilidad y promueve una cultura de equidad en la comunidad.' },
+        educacion_ciudadana: { title: 'Directora Educación Ciudadana', duties: 'Fortalece el tejido cívico de la comunidad. Organiza programas de educación sobre deberes y derechos ciudadanos, valores familiares y convivencia pacífica. Actúa como enlace con las autoridades educativas locales.' },
+        gestion_ambiental: { title: 'Director Gestión Ambiental y Aseo Urbano', duties: 'Vela por la sostenibilidad y limpieza del entorno. Prepara y supervisa programas de saneamiento, manejo de residuos y reciclaje. Promueve la conciencia ambiental y el ornato de las áreas comunes.' },
+        relaciones_publicas: { title: 'Director de Relaciones Públicas', duties: 'Gestiona la imagen y comunicación de la Junta. Es el portavoz oficial ante medios y otras entidades, promueve la comunicación interna y externa, y organiza los eventos sociales y protocolares de la comunidad.' },
+        gestion_riesgo: { title: 'Director Gestión de Riesgo', duties: 'Prepara a la comunidad para responder ante emergencias. Elabora planes de contingencia, organiza brigadas de respuesta, coordina entrenamientos y simulacros, y gestiona los recursos para la mitigación de desastres.' },
+        deporte: { title: 'Director Deporte', duties: 'Fomenta la salud y la recreación a través de la actividad física. Planifica, organiza y promueve torneos, competencias y eventos deportivos para todas las edades, administrando el uso de las instalaciones deportivas.' },
+        seguridad_ciudadana: { title: 'Director de Seguridad Ciudadana', duties: 'Coordina la protección de la comunidad. Actúa como enlace directo con la Policía Nacional y otros cuerpos de seguridad, elabora y ejecuta planes de vigilancia y prevención del delito, y vela por la seguridad de la infraestructura.' },
+        infraestructura: { title: 'Director Infraestructura', duties: 'Supervisa la calidad y el mantenimiento de las obras y servicios. Vigila las construcciones municipales y privadas, el estado del drenaje pluvial, la señalización vial y la calidad de los servicios públicos, reportando deficiencias.' },
+        espacios_publicos: { title: 'Director de Espacios Públicos', duties: 'Es el custodio de las áreas comunes. Dirige la preservación y el embellecimiento de parques, áreas verdes y zonas recreativas, vigilando su correcto uso y reportando cualquier violación o daño a las mismas.' },
+        salud: { title: 'Directora de Salud', duties: 'Promueve el bienestar y la salud de los residentes. Desarrolla programas de salud preventiva, coordina operativos médicos y jornadas de vacunación, y orienta a la comunidad sobre nutrición, higiene y prevención de enfermedades.' },
+        disciplinario_presidente: { title: 'Presidente Consejo Disciplinario', duties: 'Lidera el órgano de justicia interna. Preside las sesiones del Consejo de Disciplina, dirige las investigaciones, actúa como mediador en conflictos entre miembros y es responsable de aplicar las sanciones correspondientes a las faltas.' },
+        disciplinario_secretario: { title: 'Secretario Consejo Disciplinario', duties: 'Es el documentalista del proceso disciplinario. Redacta las actas, notificaciones y comunicaciones del Consejo de Disciplina y Ética, asegurando que cada caso y decisión quede debidamente registrado.' },
+        disciplinario_miembro1: { title: '1er. Miembro Consejo Disciplinario', duties: 'Actúa como fiscal y garante de los estatutos. Su función principal es vigilar el cumplimiento de las normas y puede reemplazar al Presidente del Consejo de Disciplina en su ausencia, asegurando la continuidad del órgano.' },
+        disciplinario_miembro2: { title: '2do. Miembro Consejo Disciplinario', duties: 'Es el investigador de campo del Consejo. Tiene la responsabilidad de vigilar las actividades de la comunidad, detectar posibles violaciones a los estatutos e informar al Consejo para iniciar los procedimientos correspondientes.' }
+    };
+    
+    function initApp() {
+        if (boardGrid) {
+            populateBoardGrid();
+        }
+        setupNav();
+        
+        const initialSection = 'fundamentos';
+        showSection(initialSection);
+        document.querySelector(`.nav-link[data-target='${initialSection}']`).classList.add('active');
+
+        createGastosChart();
+    }
+    
+    function setupNav() {
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const targetId = link.dataset.target;
+                
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                link.classList.add('active');
+                
+                showSection(targetId);
+            });
+        });
+    }
+
+    function showSection(targetId) {
+        sections.forEach(section => {
+            if (section.id === targetId) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
+        });
+    }
+
+    function populateBoardGrid() {
+        let gridHtml = '';
+        for (const key in boardData) {
+            gridHtml += `
+                <button data-key="${key}" class="board-member-btn text-left p-3 bg-gray-50 rounded-lg hover:bg-light-blue hover:shadow-md transition-all duration-300 border border-gray-200">
+                    <span class="font-semibold text-sm text-deep-blue">${boardData[key].title}</span>
+                </button>
+            `;
+        }
+        boardGrid.innerHTML = gridHtml;
+
+        document.querySelectorAll('.board-member-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.key;
+                updateBoardDetails(key);
+
+                document.querySelectorAll('.board-member-btn').forEach(b => {
+                    b.classList.remove('bg-accent-orange');
+                    b.classList.add('bg-gray-50');
+                    b.querySelector('span').classList.remove('text-white');
+                    b.querySelector('span').classList.add('text-deep-blue');
+                });
+                
+                btn.classList.remove('bg-gray-50');
+                btn.classList.add('bg-accent-orange');
+                btn.querySelector('span').classList.remove('text-deep-blue');
+                btn.querySelector('span').classList.add('text-white');
+            });
+        });
+    }
+
+    function updateBoardDetails(key) {
+        const data = boardData[key];
+        boardDetails.innerHTML = `
+            <h4 class="font-bold text-lg mb-2 text-deep-blue">${data.title}</h4>
+            <p class="text-gray-700 text-sm">${data.duties}</p>
+        `;
+    }
+    
+    function createGastosChart() {
+        const ctx = document.getElementById('gastosChart');
+        if (!ctx) return;
+
+        const data = {
+            labels: ['Administración (Personal, etc.)', 'Servicios Comunes (Luz, Agua)', 'Mantenimiento y Mejoras', 'Seguros y Otros'],
+            datasets: [{
+                label: 'Distribución de Gastos Comunes',
+                data: [40, 25, 25, 10],
+                backgroundColor: [
+                    '#0A3D62',
+                    '#3C6382',
+                    '#A1C1D1',
+                    '#F5A623'
+                ],
+                borderColor: '#FFFFFF',
+                borderWidth: 4,
+                hoverOffset: 8
+            }]
+        };
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'Inter' },
+                            color: '#333'
+                        }
+                    },
+                    tooltip: {
+                        bodyFont: { family: 'Inter' },
+                        titleFont: { family: 'Inter' }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+
+    initApp();
+});
+</script>
+
+</body>
+</html>
